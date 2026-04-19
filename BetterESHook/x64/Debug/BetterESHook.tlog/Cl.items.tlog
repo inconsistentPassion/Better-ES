@@ -1,0 +1,10 @@
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\src\dllmain.cpp;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\dllmain.obj
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\src\hooks.cpp;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\hooks.obj
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\src\log.cpp;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\log.obj
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\src\memory.cpp;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\memory.obj
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\src\perf_fixes.cpp;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\perf_fixes.obj
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\vendor\minhook\src\buffer.c;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\buffer.obj
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\vendor\minhook\src\hde\hde32.c;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\hde32.obj
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\vendor\minhook\src\hde\hde64.c;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\hde64.obj
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\vendor\minhook\src\hook.c;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\hook.obj
+C:\Users\HORACE\source\repos\BetterES\BetterESHook\vendor\minhook\src\trampoline.c;C:\Users\HORACE\source\repos\BetterES\BetterESHook\x64\Debug\trampoline.obj

@@ -1,0 +1,15 @@
+diff --git a/BetterESHook/CMakeLists.txt b/BetterESHook/CMakeLists.txt
+--- a/BetterESHook/CMakeLists.txt
++++ b/BetterESHook/CMakeLists.txt
+@@ -23,9 +23,10 @@
+ add_library(betteres_hook SHARED
+     src/dllmain.cpp
+     src/hooks.cpp
++    src/perf_fixes.cpp
+     src/memory.cpp
+     src/log.cpp
+ )
+
+ target_include_directories(betteres_hook PRIVATE src)
+-target_link_libraries(betteres_hook PRIVATE minhook Psapi)
++target_link_libraries(betteres_hook PRIVATE minhook Psapi dwmapi)

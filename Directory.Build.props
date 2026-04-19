@@ -1,0 +1,19 @@
+<Project>
+  <!-- Global settings for all projects in the solution -->
+
+  <PropertyGroup>
+    <!-- Ensure we don't accidentally bundle non-Windows native libs -->
+    <ExcludeNativeLibrariesForOtherPlatforms Condition="'$(RuntimeIdentifier)' == 'win-x64'">true</ExcludeNativeLibrariesForOtherPlatforms>
+  </PropertyGroup>
+
+  <!-- Cleanup junk files from the publish output -->
+  <Target Name="CleanupExtraFiles" AfterTargets="Publish" Condition="'$(RuntimeIdentifier)' == 'win-x64'">
+    <ItemGroup>
+      <ExtraFiles Include="$(PublishDir)**\*.dylib" />
+      <ExtraFiles Include="$(PublishDir)**\*.so" />
+      <ExtraFiles Include="$(PublishDir)**\*.pdb" Condition="'$(DebugType)' == 'none'" />
+    </ItemGroup>
+    <Delete Files="@(ExtraFiles)" />
+    <Message Importance="high" Text="Built-in cleanup: Removed @(ExtraFiles->Count()) non-Windows/debug files from publish output." />
+  </Target>
+</Project>

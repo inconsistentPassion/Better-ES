@@ -1,0 +1,179 @@
+<Page x:Class="BetterES.View.Pages.TuningPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:BetterES.View.Controls"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      ScrollViewer.CanContentScroll="False">
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="20,12,20,0">
+            <StackPanel>
+                <TextBlock FontSize="20" FontWeight="Bold" Margin="0,0,0,2" Text="Tuning" />
+                <TextBlock FontSize="12" Opacity="0.6" Margin="0,0,0,16"
+                           Text="Quick controls &amp; live telemetry" />
+
+                <!-- ═══ Timing Slider ═══ -->
+                <ui:Card Margin="0,0,0,10">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,8">
+                            <TextBlock Text="Timing Advance" FontSize="14" FontWeight="SemiBold" />
+                            <TextBlock x:Name="AdvanceValue" Text="0°" FontSize="14" FontWeight="Bold"
+                                       HorizontalAlignment="Right" Foreground="#44AAFF" />
+                        </Grid>
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="-20°" FontSize="10" Opacity="0.5" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <Slider Grid.Column="1" x:Name="AdvanceSlider" Minimum="-20" Maximum="20" Value="0"
+                                    TickFrequency="0.5" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+                                    ValueChanged="AdvanceSlider_ValueChanged" />
+                            <TextBlock Grid.Column="2" Text="+20°" FontSize="10" Opacity="0.5" VerticalAlignment="Center" Margin="8,0,0,0" />
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- ═══ AFR Tuning ═══ -->
+                <ui:Card Margin="0,0,0,10">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <TextBlock Text="Air Fuel Ratio" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            <ui:ToggleSwitch x:Name="CustomAfrEnabledSwitch" Content="Override" 
+                                             HorizontalAlignment="Right" FontSize="11" 
+                                             Checked="CustomAfrEnabledSwitch_Checked" 
+                                             Unchecked="CustomAfrEnabledSwitch_Unchecked" />
+                        </Grid>
+
+                        <!-- Live AFR Gauge -->
+                        <controls:AfrGauge x:Name="AfrGaugeControl" Margin="0,0,0,12" />
+
+                        <!-- Target AFR Slider -->
+                        <Grid Margin="0,0,0,6">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Grid.Column="0" Text="Target" FontSize="12" VerticalAlignment="Center" Margin="0,0,8,0" />
+                            <Slider Grid.Column="1" x:Name="TargetAfrSlider" Minimum="10.0" Maximum="18.0" Value="14.7"
+                                    TickFrequency="0.1" IsSnapToTickEnabled="True" IsMoveToPointEnabled="True"
+                                    ValueChanged="TargetAfrSlider_ValueChanged" />
+                            <TextBlock Grid.Column="2" x:Name="TargetAfrLabel" Text="14.7"
+                                       FontSize="14" FontWeight="Bold" Foreground="#44FF88"
+                                       VerticalAlignment="Center" Margin="8,0,0,0" />
+                        </Grid>
+                        <TextBlock FontSize="11" Opacity="0.5" Margin="0,0,0,12">
+                            <Run Text="Rich " /><Run Text="⟵ " Foreground="#FF8800" />
+                            <Run Text="Stoich 14.7:1" FontWeight="SemiBold" Foreground="#44FF88" />
+                            <Run Text=" ⟶" Foreground="#FF8800" /><Run Text=" Lean" />
+                        </TextBlock>
+
+                        <!-- AFR Info Grid -->
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" CornerRadius="6" Background="#0AFFFFFF" Padding="10,8" Margin="0,0,4,0"
+                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="AFR" FontSize="10" Opacity="0.5" HorizontalAlignment="Center" />
+                                    <TextBlock x:Name="AfrLiveValue" Text="--" FontSize="22" FontWeight="Bold"
+                                               Foreground="#FFBB00" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" CornerRadius="6" Background="#0AFFFFFF" Padding="10,8" Margin="4,0,4,0"
+                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="Optimal" FontSize="10" Opacity="0.5" HorizontalAlignment="Center" />
+                                    <TextBlock x:Name="AfrTargetValue" Text="14.7" FontSize="22" FontWeight="Bold"
+                                               Foreground="#44FF88" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="2" CornerRadius="6" Background="#0AFFFFFF" Padding="10,8" Margin="4,0,0,0"
+                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="Lambda" FontSize="10" Opacity="0.5" HorizontalAlignment="Center" />
+                                    <TextBlock x:Name="LambdaValue" Text="--" FontSize="22" FontWeight="Bold"
+                                               Foreground="#44AAFF" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- ═══ Telemetry Card ═══ -->
+                <ui:Card Margin="0,0,0,10">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
+                        <Border Grid.Column="0" CornerRadius="6" Background="#0AFFFFFF" Padding="12,10" Margin="0,0,4,0"
+                                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="Advance" FontSize="10" Opacity="0.5" HorizontalAlignment="Center" />
+                                <TextBlock x:Name="LiveAdvance" Text="--°" FontSize="28" FontWeight="Bold"
+                                           Foreground="#44AAFF" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                        <Border Grid.Column="1" CornerRadius="6" Background="#0AFFFFFF" Padding="12,10" Margin="4,0,0,0"
+                                BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                            <StackPanel HorizontalAlignment="Center">
+                                <TextBlock Text="RPM" FontSize="10" Opacity="0.5" HorizontalAlignment="Center" />
+                                <TextBlock x:Name="LiveRpm" Text="----" FontSize="28" FontWeight="Bold"
+                                           Foreground="#FF8844" HorizontalAlignment="Center" />
+                            </StackPanel>
+                        </Border>
+                    </Grid>
+                </ui:Card>
+
+                <!-- ═══ Turbo Bar ═══ -->
+                <ui:Card Margin="0,0,0,12">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,10">
+                            <TextBlock Text="Turbo" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            <Border HorizontalAlignment="Right" CornerRadius="4" Padding="8,3"
+                                    Background="{DynamicResource ControlFillColorDefaultBrush}"
+                                    BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                <TextBlock x:Name="TurboStatusText" Text="OFF" FontSize="10" FontWeight="SemiBold"
+                                           Foreground="#FF8080" />
+                            </Border>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="6" />
+                                <RowDefinition Height="8" />
+                            </Grid.RowDefinitions>
+                            <Grid Grid.Row="0">
+                                <Border Background="#08FFFFFF" CornerRadius="3" />
+                                <Border x:Name="BoostBar" Width="0" CornerRadius="3" HorizontalAlignment="Left">
+                                    <Border.Background>
+                                        <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                            <GradientStop x:Name="BarColorStart" Color="#2266FF" Offset="0"/>
+                                            <GradientStop x:Name="BarColorEnd" Color="#4488FF" Offset="1"/>
+                                        </LinearGradientBrush>
+                                    </Border.Background>
+                                </Border>
+                                <Border x:Name="WastegateTick" Width="2" CornerRadius="1" HorizontalAlignment="Left"
+                                        Background="#FF4444" Opacity="0.5" />
+                            </Grid>
+                            <StackPanel Grid.Row="1" Orientation="Horizontal" HorizontalAlignment="Right">
+                                <TextBlock x:Name="BoostValueText" Text="0.0" FontSize="22" FontWeight="Bold" />
+                                <TextBlock x:Name="BoostUnitText" Text="PSI" FontSize="9" FontWeight="SemiBold"
+                                           Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                                           VerticalAlignment="Bottom" Margin="4,0,0,2" Opacity="0.5" />
+                            </StackPanel>
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+
+                <Border Height="12" />
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

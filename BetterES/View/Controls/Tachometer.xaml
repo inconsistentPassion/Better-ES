@@ -1,0 +1,143 @@
+<UserControl x:Class="BetterES.View.Controls.Tachometer"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="400" d:DesignHeight="96">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="TickMarkTemplate">
+            <StackPanel>
+                <Border Width="1" Height="12" Background="#20FFFFFF" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Label}"
+                           FontSize="7"
+                           Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                           Opacity="0.4"
+                           HorizontalAlignment="Center"
+                           Margin="0,1,0,0" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
+            CornerRadius="4"
+            Padding="20,14"
+            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+            BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Top: Gear + RPM -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Gear pill -->
+                <Border Grid.Column="0"
+                        CornerRadius="4"
+                        Padding="6,6"
+                        MinWidth="48"
+                        VerticalAlignment="Center"
+                        BorderBrush="#254488FF"
+                        BorderThickness="1">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#184488FF" Offset="0"/>
+                            <GradientStop Color="#084488FF" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                        <TextBlock x:Name="GearTextBlock"
+                                   Text="N"
+                                   FontSize="24"
+                                   FontWeight="Bold"
+                                   Foreground="#4488FF"
+                                   VerticalAlignment="Center" />
+                    </StackPanel>
+                </Border>
+
+                <!-- RPM value right-aligned -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock x:Name="RpmTextBlock"
+                               Text="0"
+                               FontSize="36"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <TextBlock Text="RPM"
+                               FontSize="9"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                               VerticalAlignment="Bottom"
+                               Margin="4,0,0,3"
+                               Opacity="0.5" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Bar + tick marks -->
+            <Grid Grid.Row="1" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="6" />
+                    <RowDefinition Height="0" />
+                </Grid.RowDefinitions>
+
+                <!-- Bar -->
+                <Grid Grid.Row="0">
+                    <!-- Track -->
+                    <Border Background="#08FFFFFF" CornerRadius="3" RenderTransformOrigin="0.499,2.544" />
+
+                    <!-- Redline zone hint -->
+                    <Border x:Name="RedlineZone"
+                            CornerRadius="0"
+                            HorizontalAlignment="Right"
+                            Width="0"
+                            Opacity="0.12">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop Color="#00FF4444" Offset="0"/>
+                                <GradientStop Color="#FFFF4444" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <!-- Fill -->
+                    <Border x:Name="ProgressBar"
+                            Width="0"
+                            CornerRadius="3"
+                            HorizontalAlignment="Left">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <GradientStop x:Name="BarColorStart" Color="#2266FF" Offset="0"/>
+                                <GradientStop x:Name="BarColorEnd" Color="#4488FF" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <!-- Redline tick -->
+                    <Border x:Name="RedlineTick"
+                            Width="2"
+                            CornerRadius="1"
+                            HorizontalAlignment="Left"
+                            Margin="0,0,0,0"
+                            Background="#FF4444"
+                            Opacity="0.5" />
+                </Grid>
+
+                <!-- Scale tick marks -->
+                <ItemsControl Grid.Row="0" x:Name="TickMarks" IsHitTestVisible="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>                
+                </ItemsControl>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

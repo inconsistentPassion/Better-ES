@@ -1,0 +1,139 @@
+<UserControl x:Class="BetterES.View.Controls.AfrGauge"
+             xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+             xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+             xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+             xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+             mc:Ignorable="d"
+             d:DesignWidth="400" d:DesignHeight="96">
+
+    <UserControl.Resources>
+        <DataTemplate x:Key="TickMarkTemplate">
+            <StackPanel>
+                <Border Width="1" Height="12" Background="#20FFFFFF" HorizontalAlignment="Center" />
+                <TextBlock Text="{Binding Label}"
+                           FontSize="7"
+                           Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                           Opacity="0.4"
+                           HorizontalAlignment="Center"
+                           Margin="0,1,0,0" />
+            </StackPanel>
+        </DataTemplate>
+    </UserControl.Resources>
+
+    <Border Background="{DynamicResource ControlFillColorDefaultBrush}"
+            CornerRadius="4"
+            Padding="20,14"
+            BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}"
+            BorderThickness="1">
+        <Grid>
+            <Grid.RowDefinitions>
+                <RowDefinition Height="Auto" />
+                <RowDefinition Height="12" />
+                <RowDefinition Height="Auto" />
+            </Grid.RowDefinitions>
+
+            <!-- Top: AFR value -->
+            <Grid Grid.Row="0">
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="*" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Label pill -->
+                <Border Grid.Column="0"
+                        CornerRadius="4"
+                        Padding="6,6"
+                        MinWidth="48"
+                        VerticalAlignment="Center"
+                        BorderBrush="#25FFBB00"
+                        BorderThickness="1">
+                    <Border.Background>
+                        <LinearGradientBrush StartPoint="0,0" EndPoint="0,1">
+                            <GradientStop Color="#18FFBB00" Offset="0"/>
+                            <GradientStop Color="#08FFBB00" Offset="1"/>
+                        </LinearGradientBrush>
+                    </Border.Background>
+                    <TextBlock Text="AFR"
+                               FontSize="12"
+                               FontWeight="Bold"
+                               Foreground="#FFBB00"
+                               HorizontalAlignment="Center" />
+                </Border>
+
+                <!-- AFR value right-aligned -->
+                <StackPanel Grid.Column="1" Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                    <TextBlock x:Name="AfrTextBlock"
+                               Text="0.0"
+                               FontSize="36"
+                               FontWeight="Bold"
+                               Foreground="{DynamicResource TextFillColorPrimaryBrush}" />
+                    <TextBlock Text="AFR"
+                               FontSize="9"
+                               FontWeight="SemiBold"
+                               Foreground="{DynamicResource TextFillColorTertiaryBrush}"
+                               VerticalAlignment="Bottom"
+                               Margin="4,0,0,3"
+                               Opacity="0.5" />
+                </StackPanel>
+            </Grid>
+
+            <!-- Bar + tick marks -->
+            <Grid Grid.Row="1" VerticalAlignment="Center">
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="6" />
+                    <RowDefinition Height="0" />
+                </Grid.RowDefinitions>
+
+                <!-- Bar -->
+                <Grid Grid.Row="0">
+                    <Border Background="#08FFFFFF" CornerRadius="3" />
+
+                    <!-- AFR zone: rich (red) → ideal (green) → lean (red) gradient background -->
+                    <!-- Rich: 0-12 AFR, Ideal: 14-16 AFR (green at 14.7), Lean: 16+ AFR -->
+                    <Border CornerRadius="3" ClipToBounds="True" Opacity="0.2">
+                        <Border.Background>
+                            <LinearGradientBrush StartPoint="0,0" EndPoint="1,0">
+                                <!-- 0-10: Rich red -->
+                                <GradientStop Color="#FF4444" Offset="0.0"/>
+                                <GradientStop Color="#FF6666" Offset="0.2"/>
+                                <!-- 12-14: Orange transition -->
+                                <GradientStop Color="#FF8800" Offset="0.24"/>
+                                <GradientStop Color="#FFAA00" Offset="0.28"/>
+                                <!-- 14-16: Ideal green -->
+                                <GradientStop Color="#44FF88" Offset="0.294"/>
+                                <GradientStop Color="#44FF88" Offset="0.32"/>
+                                <!-- 16-20: Orange transition -->
+                                <GradientStop Color="#FFBB00" Offset="0.32"/>
+                                <GradientStop Color="#FF8800" Offset="0.4"/>
+                                <!-- 20+: Lean red -->
+                                <GradientStop Color="#FF4444" Offset="0.5"/>
+                                <GradientStop Color="#FF4444" Offset="1"/>
+                            </LinearGradientBrush>
+                        </Border.Background>
+                    </Border>
+
+                    <!-- Moving tick indicator (not a fill bar) -->
+                    <Border x:Name="AfrTick"
+                            Width="2"
+                            Height="6"
+                            CornerRadius="1"
+                            HorizontalAlignment="Left"
+                            Margin="0,0,0,0">
+                        <Border.Background>
+                            <SolidColorBrush x:Name="AfrTickColor" Color="#44FF88" />
+                        </Border.Background>
+                    </Border>
+                </Grid>
+
+                <!-- Scale tick marks -->
+                <ItemsControl Grid.Row="0" x:Name="TickMarks" IsHitTestVisible="False">
+                    <ItemsControl.ItemsPanel>
+                        <ItemsPanelTemplate>
+                            <Canvas />
+                        </ItemsPanelTemplate>
+                    </ItemsControl.ItemsPanel>
+                </ItemsControl>
+            </Grid>
+        </Grid>
+    </Border>
+</UserControl>

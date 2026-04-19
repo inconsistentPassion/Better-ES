@@ -1,0 +1,49 @@
+diff --git a/BetterESHook/src/hooks.cpp b/BetterESHook/src/hooks.cpp
+--- a/BetterESHook/src/hooks.cpp
++++ b/BetterESHook/src/hooks.cpp
+@@ -539,6 +539,10 @@
+ __int64 __fastcall simProcessHk(__int64 a1, float a2) {
+     // ── Frame spike detection: compensate for audio gaps ──────────
+     // Normal tick interval at 10kHz = 100μs. When the game stalls
++    // (e.g., DWM throttling when unfocused, AC GPU spike), gaps of
++    // 300μs-15ms+ appear. During those gaps no physics runs → no
++    // audio samples → pop/crackle.
++    //
+     // (e.g., AC GPU spike), gaps of 500μs-10ms+ appear. During those
+     // gaps no physics runs → no audio samples → pop/crackle.
+     // Fix: detect large gaps and run extra physics steps via oSimProcess
+@@ -556,14 +560,28 @@
+     long long gapUs = ((now.QuadPart - lastTick.QuadPart) * 1000000LL) / freq.QuadPart;
+     lastTick = now;
+
+-    // Normal gap is ~100μs. If gap > 500μs, the game stalled.
+-    // Run extra physics steps to fill audio buffer.
+-    // Cap at 50 extra steps (~5ms of physics) to avoid spiral of death.
+-    if (gapUs > 500 && State::attached.load()) {
++    // Track consecutive gaps for sustained stall detection
++    static int consecutiveGaps = 0;
++
++    // Normal gap is ~100μs. If gap > 300μs, the game stalled.
++    // (Lowered from 500μs to catch DWM-induced throttling earlier)
++    if (gapUs > 300 && State::attached.load()) {
++        consecutiveGaps++;
+         int extraSteps = (int)((gapUs - 100) / 100);  // steps to compensate
+-        if (extraSteps > 50) extraSteps = 50;
++
++        // If we've had 3+ consecutive gaps, it's sustained DWM throttling
++        // (not a transient spike). Be more aggressive.
++        int maxSteps = 50;  // default: 5ms max (transient spike)
++        if (consecutiveGaps >= 3) {
++            maxSteps = 100;  // sustained: 10ms max
++        }
++
++        if (extraSteps > maxSteps) extraSteps = maxSteps;
+         for (int i = 0; i < extraSteps; i++) {
+             oSimProcess(a1, a2);
+         }
++    } else {
++        // Reset consecutive counter on clean tick
++        if (gapUs <= 300) consecutiveGaps = 0;
+     }
+
+     __int64 result = oSimProcess(a1, a2);

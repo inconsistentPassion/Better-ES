@@ -1,0 +1,26 @@
+# Auto-detect line endings
+* text=auto
+
+# Source
+*.cs            text diff=csharp
+*.cpp           text diff=cpp
+*.h             text diff=cpp
+*.xaml          text
+*.csproj        text
+*.vcxproj       text
+*.sln           text eol=crlf
+*.props         text
+*.txt           text
+*.md            text
+*.json          text
+*.xml           text
+*.cmake         text
+CMakeLists.txt  text
+
+# Binary
+*.dll           binary
+*.exe           binary
+*.png           binary
+*.jpg           binary
+*.gif           binary
+*.ico           binary

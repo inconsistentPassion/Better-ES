@@ -1,0 +1,180 @@
+<Page x:Class="BetterES.View.Pages.DragPage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      ScrollViewer.CanContentScroll="False">
+
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="20,12,20,0">
+            <StackPanel>
+                <TextBlock FontSize="20" FontWeight="Bold" Margin="0,0,0,2" Text="Drag Timer" />
+                <TextBlock FontSize="12" Opacity="0.6" Margin="0,0,0,12" Text="Acceleration timing — Dragy-style" />
+
+                <!-- Status & Controls -->
+                <ui:Card Margin="0,0,0,8">
+                    <Grid>
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="*" />
+                            <ColumnDefinition Width="Auto" />
+                        </Grid.ColumnDefinitions>
+                        <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                            <TextBlock x:Name="RunStatusText" Text="Ready" FontSize="13" FontWeight="SemiBold" />
+                            <TextBlock x:Name="RunSubText" Text="Press Stage then Go" FontSize="10" Opacity="0.5" />
+                        </StackPanel>
+                        <StackPanel Grid.Column="1" Orientation="Horizontal">
+                            <ui:Button x:Name="StageBtn" Content="Stage" Appearance="Secondary" FontSize="12"
+                                       Padding="16,8" Click="Stage_Click" Margin="0,0,6,0" />
+                            <ui:Button x:Name="GoBtn" Content="Go" Appearance="Primary" FontSize="12"
+                                       Padding="16,8" Click="Go_Click" Margin="0,0,6,0" IsEnabled="False" />
+                            <ui:Button x:Name="StopBtn" Content="Stop" Appearance="Danger" FontSize="12"
+                                       Padding="16,8" Click="Stop_Click" Margin="0,0,6,0" IsEnabled="False" />
+                            <ui:Button x:Name="ResetBtn" Content="Reset" Appearance="Secondary" FontSize="12"
+                                       Padding="16,8" Click="Reset_Click" />
+                        </StackPanel>
+                    </Grid>
+                </ui:Card>
+
+                <!-- Timer + Speed + G -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ui:Card Grid.Column="0" Margin="0,0,4,0">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="ELAPSED" FontSize="8" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock x:Name="TimerText" Text="0.000" FontSize="36" FontWeight="Bold"
+                                       HorizontalAlignment="Center" />
+                            <TextBlock Text="seconds" FontSize="9" Opacity="0.4" HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </ui:Card>
+
+                    <ui:Card Grid.Column="1" Margin="2,0">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="SPEED" FontSize="8" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Center">
+                                <TextBlock x:Name="SpeedText" Text="0" FontSize="36" FontWeight="Bold" Foreground="#4488FF" />
+                                <TextBlock x:Name="SpeedUnitText" Text="mph" FontSize="10" Opacity="0.5" VerticalAlignment="Bottom" Margin="2,0,0,6" />
+                            </StackPanel>
+                            <TextBlock x:Name="RpmSmallText" Text="0 RPM · N" FontSize="9" Opacity="0.4" HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </ui:Card>
+
+                    <ui:Card Grid.Column="2" Margin="4,0,0,0">
+                        <StackPanel HorizontalAlignment="Center">
+                            <TextBlock Text="G-FORCE" FontSize="8" FontWeight="SemiBold"
+                                       Foreground="{DynamicResource TextFillColorTertiaryBrush}" HorizontalAlignment="Center" />
+                            <TextBlock x:Name="GForceText" Text="0.00" FontSize="36" FontWeight="Bold" Foreground="#FF8800" HorizontalAlignment="Center" />
+                            <TextBlock Text="longitudinal" FontSize="9" Opacity="0.4" HorizontalAlignment="Center" />
+                        </StackPanel>
+                    </ui:Card>
+                </Grid>
+
+                <!-- Splits -->
+                <ui:Card Margin="0,0,0,8">
+                    <StackPanel>
+                        <TextBlock Text="Split Times" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                                <ColumnDefinition Width="40" />
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="Auto" /><RowDefinition Height="6" />
+                                <RowDefinition Height="Auto" /><RowDefinition Height="6" />
+                                <RowDefinition Height="Auto" /><RowDefinition Height="6" />
+                                <RowDefinition Height="Auto" /><RowDefinition Height="6" />
+                                <RowDefinition Height="Auto" /><RowDefinition Height="6" />
+                                <RowDefinition Height="Auto" /><RowDefinition Height="6" />
+                                <RowDefinition Height="Auto" />
+                            </Grid.RowDefinitions>
+
+                            <TextBlock Grid.Row="0" Grid.Column="0" Text="60 ft" FontSize="12" />
+                            <TextBlock x:Name="Split60ft" Grid.Row="0" Grid.Column="1" Text="—" FontSize="13" FontWeight="Bold" Foreground="#44BB44" />
+                            <TextBlock Grid.Row="0" Grid.Column="3" x:Name="Label060" Text="0–60 mph" FontSize="12" />
+                            <TextBlock x:Name="Split060" Grid.Row="0" Grid.Column="4" Text="—" FontSize="13" FontWeight="Bold" Foreground="#4488FF" />
+
+                            <TextBlock Grid.Row="2" Grid.Column="0" Text="330 ft" FontSize="12" />
+                            <TextBlock x:Name="Split330ft" Grid.Row="2" Grid.Column="1" Text="—" FontSize="13" FontWeight="Bold" Foreground="#44BB44" />
+                            <TextBlock Grid.Row="2" Grid.Column="3" x:Name="Label0100" Text="0–100 mph" FontSize="12" />
+                            <TextBlock x:Name="Split0100" Grid.Row="2" Grid.Column="4" Text="—" FontSize="13" FontWeight="Bold" Foreground="#4488FF" />
+
+                            <TextBlock Grid.Row="4" Grid.Column="0" Text="⅛ mile" FontSize="12" />
+                            <TextBlock x:Name="Split8th" Grid.Row="4" Grid.Column="1" Text="—" FontSize="13" FontWeight="Bold" Foreground="#44BB44" />
+                            <TextBlock Grid.Row="4" Grid.Column="3" x:Name="Label0130" Text="0–130 mph" FontSize="12" />
+                            <TextBlock x:Name="Split0130" Grid.Row="4" Grid.Column="4" Text="—" FontSize="13" FontWeight="Bold" Foreground="#4488FF" />
+
+                            <TextBlock Grid.Row="6" Grid.Column="0" Text="1000 ft" FontSize="12" />
+                            <TextBlock x:Name="Split1000ft" Grid.Row="6" Grid.Column="1" Text="—" FontSize="13" FontWeight="Bold" Foreground="#44BB44" />
+                            <TextBlock Grid.Row="6" Grid.Column="3" x:Name="Label60130" Text="60–130 mph" FontSize="12" />
+                            <TextBlock x:Name="Split60130" Grid.Row="6" Grid.Column="4" Text="—" FontSize="13" FontWeight="Bold" Foreground="#FF8800" />
+
+                            <TextBlock Grid.Row="8" Grid.Column="0" Text="¼ mile" FontSize="12" FontWeight="SemiBold" />
+                            <TextBlock x:Name="SplitQuarter" Grid.Row="8" Grid.Column="1" Text="—" FontSize="14" FontWeight="Bold" Foreground="#44BB44" />
+                            <TextBlock Grid.Row="8" Grid.Column="3" x:Name="LabelTrap" Text="¼ mile trap" FontSize="12" />
+                            <TextBlock x:Name="TrapSpeed" Grid.Row="8" Grid.Column="4" Text="—" FontSize="13" FontWeight="Bold" Foreground="#4488FF" />
+
+                            <TextBlock Grid.Row="10" Grid.Column="0" Text="½ mile" FontSize="12" />
+                            <TextBlock x:Name="SplitHalf" Grid.Row="10" Grid.Column="1" Text="—" FontSize="13" FontWeight="Bold" Foreground="#44BB44" />
+                            <TextBlock Grid.Row="10" Grid.Column="3" Text="Peak G" FontSize="12" />
+                            <TextBlock x:Name="PeakGText" Grid.Row="10" Grid.Column="4" Text="—" FontSize="13" FontWeight="Bold" Foreground="#FF8800" />
+
+                            <TextBlock Grid.Row="12" Grid.Column="0" Text="1 mile" FontSize="12" />
+                            <TextBlock x:Name="SplitMile" Grid.Row="12" Grid.Column="1" Text="—" FontSize="13" FontWeight="Bold" Foreground="#44BB44" />
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Graph with mode selector -->
+                <ui:Card Margin="0,0,0,8">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,6">
+                            <TextBlock x:Name="GraphTitle" Text="Speed vs Time" FontSize="14" FontWeight="SemiBold" />
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <ui:Button x:Name="BtnGraphTime" Content="Speed × Time" Appearance="Primary" FontSize="10"
+                                           Padding="10,4" Click="GraphMode_Click" Margin="0,0,4,0" Tag="Time" />
+                                <ui:Button x:Name="BtnGraphDist" Content="Speed × Dist" Appearance="Secondary" FontSize="10"
+                                           Padding="10,4" Click="GraphMode_Click" Margin="0,0,4,0" Tag="Distance" />
+                                <ui:Button x:Name="BtnGraphAccel" Content="Acceleration" Appearance="Secondary" FontSize="10"
+                                           Padding="10,4" Click="GraphMode_Click" Tag="Accel" />
+                            </StackPanel>
+                        </Grid>
+
+                        <!-- Legend -->
+                        <StackPanel Orientation="Horizontal" Margin="0,0,0,4">
+                            <Ellipse Width="8" Height="8" Fill="#4488FF" VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock x:Name="LegendCurrent" Text="Current" FontSize="10" Foreground="#4488FF" VerticalAlignment="Center" Margin="0,0,10,0" />
+                            <Ellipse Width="8" Height="8" Fill="#55777777" VerticalAlignment="Center" Margin="0,0,4,0" />
+                            <TextBlock Text="Best" FontSize="10" Opacity="0.5" VerticalAlignment="Center" />
+                        </StackPanel>
+
+                        <Border ClipToBounds="True" CornerRadius="4">
+                            <Canvas x:Name="GraphCanvas" Height="220"
+                                    ClipToBounds="True"
+                                    Background="{DynamicResource ControlFillColorDefaultBrush}" />
+                        </Border>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- History -->
+                <ui:Card Margin="0,0,0,20">
+                    <StackPanel>
+                        <TextBlock Text="Run History" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,8" />
+                        <Border x:Name="HistoryEmpty" Padding="16">
+                            <TextBlock Text="No runs yet" Opacity="0.4" HorizontalAlignment="Center" FontSize="11" />
+                        </Border>
+                        <ItemsControl x:Name="HistoryList" />
+                    </StackPanel>
+                </ui:Card>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

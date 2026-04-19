@@ -1,0 +1,129 @@
+<Page x:Class="BetterES.View.Pages.ModePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      ScrollViewer.CanContentScroll="False">
+    <Page.Resources>
+        <Style x:Key="ModeCard" TargetType="Border">
+            <Setter Property="CornerRadius" Value="6" />
+            <Setter Property="Padding" Value="14,10" />
+            <Setter Property="BorderThickness" Value="1" />
+            <Setter Property="BorderBrush" Value="{DynamicResource ControlStrokeColorDefaultBrush}" />
+            <Setter Property="Background" Value="#08FFFFFF" />
+            <Setter Property="Margin" Value="0,0,0,10" />
+            <Setter Property="Cursor" Value="Hand" />
+        </Style>
+    </Page.Resources>
+    <Grid>
+        <ScrollViewer VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="20,12,20,0">
+            <StackPanel>
+                <TextBlock FontSize="20" FontWeight="Bold" Margin="0,0,0,2" Text="Mode" />
+                <TextBlock FontSize="12" Opacity="0.6" Margin="0,0,0,12" Text="Connection operating mode &amp; bridge behaviour" />
+                <ui:Card Margin="0,0,0,8">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,12">
+                            <TextBlock Text="Active Mode" FontSize="14" FontWeight="SemiBold" VerticalAlignment="Center" />
+                            <Border x:Name="ModeBadge" Background="#4044AAFF" CornerRadius="4" Padding="8,3" HorizontalAlignment="Right" VerticalAlignment="Center">
+                                <TextBlock x:Name="ModeBadgeText" Text="Standalone" FontSize="10" FontWeight="SemiBold" Foreground="#60A5FA" />
+                            </Border>
+                        </Grid>
+                        <RadioButton x:Name="ModeStandalone" Margin="0,0,0,10" GroupName="ConnectionMode" IsChecked="True" Checked="ModeRadio_Checked">
+                            <Border Style="{StaticResource ModeCard}">
+                                <StackPanel>
+                                    <TextBlock Text="Standalone(Disconnect Game, Button Not Working)" FontSize="13" FontWeight="SemiBold" />
+                                    <TextBlock Text="Use BetterES controls directly. No game telemetry." FontSize="11" Opacity="0.5" />
+                                </StackPanel>
+                            </Border>
+                        </RadioButton>
+                        <RadioButton x:Name="ModeBridge" Margin="0,0,0,10" GroupName="ConnectionMode" Checked="ModeRadio_Checked">
+                            <Border Style="{StaticResource ModeCard}">
+                                <StackPanel>
+                                    <TextBlock Text="Bridge" FontSize="13" FontWeight="SemiBold" />
+                                    <TextBlock Text="Drive ES engine state from game telemetry — throttle, RPM, manifold pressure, and load affect audio synthesis." FontSize="11" Opacity="0.5" />
+                                </StackPanel>
+                            </Border>
+                        </RadioButton>
+                        <RadioButton x:Name="ModePassthrough" Margin="0,0,0,0" GroupName="ConnectionMode" Checked="ModeRadio_Checked">
+                            <Border Style="{StaticResource ModeCard}">
+                                <StackPanel>
+                                    <TextBlock Text="Passthrough (Will Delete)" FontSize="13" FontWeight="SemiBold" />
+                                    <TextBlock Text="Read game data only. No engine control, pure telemetry viewer." FontSize="11" Opacity="0.5" />
+                                </StackPanel>
+                            </Border>
+                        </RadioButton>
+                    </StackPanel>
+                </ui:Card>
+                <ui:Card Margin="0,0,0,8" x:Name="BridgeSettingsCard" Visibility="Collapsed">
+                    <StackPanel>
+                        <TextBlock Text="Bridge Settings" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <Grid Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="Input Source" FontSize="12" />
+                                <TextBlock Text="Which game value drives the engine simulator" FontSize="11" Opacity="0.5" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <RadioButton x:Name="SourceThrottle" Content="Throttle" IsChecked="True" Margin="0,0,12,0" Checked="SourceRadio_Checked" />
+                                <RadioButton x:Name="SourceTurbo" Content="Turbo / Boost" Checked="SourceRadio_Checked" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,16">
+                            <StackPanel>
+                                <TextBlock Text="RPM Bridge Method" FontSize="12" />
+                                <TextBlock x:Name="BridgeMethodStatusText" Text="Not initialized" FontSize="11" Opacity="0.5" />
+                            </StackPanel>
+                            <StackPanel Orientation="Horizontal" HorizontalAlignment="Right">
+                                <RadioButton x:Name="MethodDynoHold" Content="Dyno Hold" IsChecked="True" Margin="0,0,12,0" Checked="MethodRadio_Checked" />
+                                <RadioButton x:Name="MethodDirect" Content="Direct Velocity Write" Checked="MethodRadio_Checked" />
+                            </StackPanel>
+                        </Grid>
+
+                        <Grid Margin="0,0,0,12">
+                            <StackPanel>
+                                <TextBlock Text="RPM Override" FontSize="12" />
+                                <TextBlock Text="Force ES RPM to match game RPM" FontSize="11" Opacity="0.5" />
+                            </StackPanel>
+                            <ui:ToggleSwitch x:Name="RpmOverrideToggle" IsChecked="True" HorizontalAlignment="Right" Checked="RpmOverride_Changed" Unchecked="RpmOverride_Changed" />
+                        </Grid>
+                        <Grid Margin="0,0,0,10">
+                            <StackPanel>
+                                <TextBlock Text="Throttle Override" FontSize="12" />
+                                <TextBlock Text="Forward game throttle directly to Engine Simulator" FontSize="11" Opacity="0.5" />
+                            </StackPanel>
+                            <ui:ToggleSwitch x:Name="ThrottleOverrideToggle" IsChecked="True" HorizontalAlignment="Right" Checked="ThrottleOverride_Changed" Unchecked="ThrottleOverride_Changed" />
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+                <ui:Card Margin="0,0,0,8">
+                    <StackPanel>
+                        <TextBlock Text="Live Status" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" /><ColumnDefinition Width="*" /><ColumnDefinition Width="*" />
+                            </Grid.ColumnDefinitions>
+                            <Border Grid.Column="0" CornerRadius="6" Background="#0AFFFFFF" Padding="12,8" Margin="0,0,4,0" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="Game" FontSize="10" Opacity="0.5" HorizontalAlignment="Center" />
+                                    <TextBlock x:Name="GameStatusLabel" Text="—" FontSize="16" FontWeight="Bold" Foreground="#60A5FA" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="1" CornerRadius="6" Background="#0AFFFFFF" Padding="12,8" Margin="4,0,4,0" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="Engine Sim" FontSize="10" Opacity="0.5" HorizontalAlignment="Center" />
+                                    <TextBlock x:Name="EsStatusLabel" Text="—" FontSize="16" FontWeight="Bold" Foreground="#60A5FA" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                            <Border Grid.Column="2" CornerRadius="6" Background="#0AFFFFFF" Padding="12,8" Margin="4,0,0,0" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}" BorderThickness="1">
+                                <StackPanel HorizontalAlignment="Center">
+                                    <TextBlock Text="Connection" FontSize="10" Opacity="0.5" HorizontalAlignment="Center" />
+                                    <TextBlock x:Name="BridgeStatusLabel" Text="Inactive" FontSize="16" FontWeight="Bold" Foreground="#FF6644" HorizontalAlignment="Center" />
+                                </StackPanel>
+                            </Border>
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+            </StackPanel>
+        </ScrollViewer>
+    </Grid>
+</Page>

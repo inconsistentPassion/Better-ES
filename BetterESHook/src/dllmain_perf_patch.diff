@@ -1,0 +1,24 @@
+diff --git a/BetterESHook/src/dllmain.cpp b/BetterESHook/src/dllmain.cpp
+--- a/BetterESHook/src/dllmain.cpp
++++ b/BetterESHook/src/dllmain.cpp
+@@ -1,6 +1,7 @@
+ #include "common.h"
+ #include "hooks.h"
+-#include "hooks.h"
++#include "perf_fixes.h"
++#include "hooks.h"
+ #include "log.h"
+ #include <MinHook.h>
+ #include <stdlib.h>
+@@ -118,6 +119,10 @@
+     Sleep(500);
+     Log("Calling SetupHooks...");
+     SetupHooks();
+     Log("SetupHooks returned, attached=%d", State::attached.load() ? 1 : 0);
++
++    // ── Performance fixes: WndProc, DWM, SDL swap, thread priority ──
++    Log("Installing perf fixes...");
++    InstallPerfFixes();
+
+     // 5. Re-apply thread priority AFTER hooks are installed (hooks run in
+     //    sim/render threads which inherit the DLL thread's priority briefly)

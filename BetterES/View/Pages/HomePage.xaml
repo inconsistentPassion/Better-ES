@@ -1,0 +1,138 @@
+<Page x:Class="BetterES.View.Pages.HomePage"
+      xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+      xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+      xmlns:ui="http://schemas.lepo.co/wpfui/2022/xaml"
+      xmlns:controls="clr-namespace:BetterES.View.Controls"
+      Foreground="{DynamicResource TextFillColorPrimaryBrush}"
+      ScrollViewer.CanContentScroll="False">
+
+    <Grid>
+        <Grid.RowDefinitions>
+            <RowDefinition Height="*" />
+            <RowDefinition Height="Auto" />
+        </Grid.RowDefinitions>
+
+        <ScrollViewer Grid.Row="0" VerticalScrollBarVisibility="Auto" HorizontalScrollBarVisibility="Disabled" Padding="20,12,20,0">
+            <StackPanel>
+                <TextBlock FontSize="20" FontWeight="Bold" Margin="0,0,0,2" Text="BetterES" />
+                <TextBlock FontSize="12" Opacity="0.6" Margin="0,0,0,12" Text="Telemetry Dashboard" />
+
+                <!-- Connection Card -->
+                <ui:Card Margin="0,0,0,8">
+                    <StackPanel>
+                        <Grid Margin="0,0,0,8">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <TextBlock Text="Connection" FontSize="14" FontWeight="SemiBold" Grid.Column="0" />
+                            <Border x:Name="StatusBadge" Grid.Column="1" Background="#40FF4040" CornerRadius="4" Padding="8,3" VerticalAlignment="Center">
+                                <TextBlock x:Name="StatusText" Text="Disconnected" FontSize="10" FontWeight="SemiBold" Foreground="#FF8080" />
+                            </Border>
+                        </Grid>
+
+                        <TextBlock FontSize="11" Opacity="0.5" Margin="0,0,0,12" TextWrapping="Wrap"
+                                   x:Name="DescriptionText"
+                                   Text="Engine Simulator must be open. Click Connect to automatically link with the simulator." />
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="*" />
+                                <ColumnDefinition Width="Auto" />
+                        <ColumnDefinition Width="12" />
+                        <ColumnDefinition Width="Auto" />
+                            </Grid.ColumnDefinitions>
+                            <StackPanel Grid.Column="0" VerticalAlignment="Center">
+                                <TextBlock x:Name="StatusTextBlock" FontSize="11" Opacity="0.5" Text="Status: Idle" />
+                            </StackPanel>
+                            <ui:Button x:Name="ConnectButton" Grid.Column="1" Content="Connect" Appearance="Primary" FontSize="12" Click="ConnectButton_Click" />
+                        </Grid>
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Tachometer Card -->
+                <ui:Card Margin="0,0,0,8">
+                    <StackPanel>
+                        <TextBlock Text="Tachometer" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" />
+                        <controls:Tachometer x:Name="TachometerControl"
+                                             CurrentRpm="0"
+                                             MaxRpm="8000"
+                                             CurrentGear="0" Loaded="TachometerControl_Loaded" />
+                    </StackPanel>
+                </ui:Card>
+
+                <!-- Gauges Row -->
+                <Grid Margin="0,0,0,8">
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                        <ColumnDefinition Width="8" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <ui:Card Grid.Column="0">
+                        <StackPanel>
+                            <TextBlock Text="Speed" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" />
+                            <controls:SpeedGauge x:Name="SpeedGaugeControl" CurrentSpeed="0" MaxSpeed="300" />
+                        </StackPanel>
+                    </ui:Card>
+
+                    <ui:Card Grid.Column="2">
+                        <StackPanel>
+                            <TextBlock Text="AFR" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" />
+                            <controls:AfrGauge x:Name="AfrGaugeControl" CurrentAfr="0" TargetAfr="14.7" />
+                        </StackPanel>
+                    </ui:Card>
+
+                    <ui:Card Grid.Column="4">
+                        <StackPanel>
+                            <TextBlock Text="Airflow" FontSize="14" FontWeight="SemiBold" Margin="0,0,0,12" />
+                            <controls:AirflowGauge x:Name="AirflowGaugeControl" CurrentFlow="0" MaxFlow="500" />
+                        </StackPanel>
+                    </ui:Card>
+                </Grid>
+
+                <!-- Logs -->
+                <ui:Card Margin="0,0,0,8">
+                    <TextBlock Text="Recent Logs Placeholder" Opacity="0.5" HorizontalAlignment="Center" VerticalAlignment="Center" Padding="40" />
+                </ui:Card>
+            </StackPanel>
+        </ScrollViewer>
+
+        <!-- Pinned bottom bar -->
+        <Border Grid.Row="1" Padding="20,8,20,8" BorderThickness="0,1,0,0" BorderBrush="{DynamicResource ControlStrokeColorDefaultBrush}">
+            <Grid>
+                <Grid.ColumnDefinitions>
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="Auto" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="*" />
+                    <ColumnDefinition Width="12" />
+                    <ColumnDefinition Width="Auto" />
+                </Grid.ColumnDefinitions>
+
+                <!-- Game selector -->
+                <ComboBox x:Name="GameSelector" Grid.Column="0" MinWidth="140" FontSize="12"
+                          VerticalAlignment="Center"
+                          SelectionChanged="GameSelector_SelectionChanged">
+                    <ComboBoxItem Content="No Game" Tag="None" />
+                    <ComboBoxItem Content="Assetto Corsa" Tag="AssettoCorsa" />
+                    <ComboBoxItem Content="BeamNG.drive" Tag="BeamNG" />
+                </ComboBox>
+
+                <!-- BeamNG port -->
+                <StackPanel x:Name="BeamNGPortRow" Grid.Column="2" Orientation="Horizontal" Visibility="Collapsed" VerticalAlignment="Center">
+                    <TextBlock Text="Port:" FontSize="11" VerticalAlignment="Center" />
+                    <TextBox x:Name="BeamNGPortBox" Text="4444" FontSize="11" Width="60" Margin="6,0,0,0"
+                             VerticalContentAlignment="Center" />
+                </StackPanel>
+
+                <ui:Button x:Name="GameConnectButton" Grid.Column="4" Content="Connect Game" Appearance="Primary" FontSize="12" Click="GameConnectButton_Click" />
+            </Grid>
+        </Border>
+    </Grid>
+</Page>

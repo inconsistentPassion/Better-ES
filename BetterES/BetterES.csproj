@@ -1,0 +1,107 @@
+<Project Sdk="Microsoft.NET.Sdk">
+
+  <PropertyGroup>
+    <OutputType>WinExe</OutputType>
+    <TargetFramework>net8.0-windows</TargetFramework>
+    <Nullable>enable</Nullable>
+    <ImplicitUsings>enable</ImplicitUsings>
+    <UseWPF>true</UseWPF>
+    <RuntimeIdentifier>win-x64</RuntimeIdentifier>
+    <PublishSingleFile>true</PublishSingleFile>
+    <SelfContained>false</SelfContained>
+    <DebugType>none</DebugType>
+    <DebugSymbols>false</DebugSymbols>
+    <IncludeNativeLibrariesForSelfExtract>true</IncludeNativeLibrariesForSelfExtract>
+  </PropertyGroup>
+
+  <!-- Hook DLL paths (shared by IDE and CLI paths) -->
+  <PropertyGroup>
+    <HookSourceDir>$(MSBuildProjectDirectory)\..\BetterESHook</HookSourceDir>
+    <HookDllPath>$(MSBuildProjectDirectory)\..\bin\$(Configuration)\betteres_hook.dll</HookDllPath>
+    <!-- Standard vswhere location; ships with all VS 2017+ installs -->
+    <_VsWherePath>C:\Program Files (x86)\Microsoft Visual Studio\Installer\vswhere.exe</_VsWherePath>
+  </PropertyGroup>
+
+  <!-- IDE Integration: Allow VS to manage build order and project visibility -->
+  <ItemGroup Condition="'$(BuildingInsideVisualStudio)' == 'true'">
+    <ProjectReference Include="..\BetterESHook\BetterESHook.vcxproj">
+      <ReferenceOutputAssembly>false</ReferenceOutputAssembly>
+      <SkipGetTargetFrameworkProperties>true</SkipGetTargetFrameworkProperties>
+      <GlobalPropertiesToRemove>TargetFramework</GlobalPropertiesToRemove>
+    </ProjectReference>
+  </ItemGroup>
+
+  <!--
+    CLI Step 1: Discover the VS install root that has the C++ workload.
+    Properties set inside a Target are visible to all later targets.
+  -->
+  <Target Name="_ResolveVSBuildTools" Condition="'$(BuildingInsideVisualStudio)' != 'true'">
+    <Exec Command="&quot;$(_VsWherePath)&quot; -latest -requires Microsoft.VisualStudio.Component.VC.Tools.x86.x64 -property installationPath"
+          ConsoleToMSBuild="true"
+          IgnoreExitCode="true"
+          Condition="Exists('$(_VsWherePath)')">
+      <Output TaskParameter="ConsoleOutput" PropertyName="_VSInstallRoot" />
+    </Exec>
+    <PropertyGroup>
+      <!-- TRIM: ConsoleOutput from Exec includes trailing \r\n which corrupts path checks -->
+      <_VSInstallRoot>$(_VSInstallRoot.Trim())</_VSInstallRoot>
+      <!-- Derive MSBuild.exe and VCTargetsPath from the discovered VS root -->
+      <_MSBuildExe Condition="'$(_VSInstallRoot)' != '' And Exists('$(_VSInstallRoot)\MSBuild\Current\Bin\amd64\MSBuild.exe')">$(_VSInstallRoot)\MSBuild\Current\Bin\amd64\MSBuild.exe</_MSBuildExe>
+      <!--
+        VCTargetsPath MUST have a trailing backslash: the VC toolset internally expands
+        $(VCTargetsPath)Platforms\x64\Platform.props (no separator added by the caller).
+        The trailing \ is handled safely in the Exec command by adding one extra \, giving
+        an even count before the closing quote so CommandLineToArgvW closes the arg correctly.
+      -->
+      <_VCTargetsPath Condition="'$(_MSBuildExe)' != ''">$(_VSInstallRoot)\MSBuild\Microsoft\VC\v170\</_VCTargetsPath>
+      <!-- Last-resort fallback (will likely fail if VCTargetsPath is unknown) -->
+      <_MSBuildExe Condition="'$(_MSBuildExe)' == ''">msbuild</_MSBuildExe>
+    </PropertyGroup>
+    <Warning Text="vswhere could not find a VS installation with the C++ workload. The hook DLL build may fail." Condition="'$(_VCTargetsPath)' == ''" />
+    <Message Importance="high" Text="[BetterES] MSBuild  : $(_MSBuildExe)" />
+    <Message Importance="high" Text="[BetterES] VCTargets: $(_VCTargetsPath)" />
+  </Target>
+
+  <!--
+    CLI Step 2: Build the native C++ hook DLL.
+    DependsOnTargets ensures _ResolveVSBuildTools runs first.
+
+    ROOT CAUSE NOTE: When dotnet build spawns a child MSBuild process, VCTargetsPath
+    is NOT inherited from the environment, so BetterESHook.vcxproj's empty fallback
+    Build target fires silently and produces nothing. Passing /p:VCTargetsPath=... on
+    the command line is the fix.
+  -->
+  <Target Name="BuildBetterESHook" BeforeTargets="BeforeBuild" DependsOnTargets="_ResolveVSBuildTools" Condition="'$(BuildingInsideVisualStudio)' != 'true'">
+    <!--
+      When the DLL is absent (first run, stale tlog from a renamed/moved repo, etc.) we
+      remove the IntDir before building. This kills the stale .tlog files that tell MSBuild
+      the project is "up to date", forcing a genuine full compile + link pass.
+      VS's own MSBuild.exe already knows VCTargetsPath from its installation — no need to
+      pass it; doing so risks quoting issues with paths that contain spaces and trailing \\.
+    -->
+    <RemoveDir Directories="$(HookSourceDir)\x64\$(Configuration)" Condition="!Exists('$(HookDllPath)')" />
+    <Message Importance="high" Text="=== Building BetterESHook via native MSBuild ($(Configuration)) ===" />
+    <Exec Command="&quot;$(_MSBuildExe)&quot; &quot;$(HookSourceDir)\BetterESHook.vcxproj&quot; /p:Configuration=$(Configuration) /p:Platform=x64 /t:Build /nologo /v:n" />
+    <!-- Hard error if the DLL wasn't produced — prevents cryptic MSB3030 downstream -->
+    <Error Condition="!Exists('$(HookDllPath)')" Text="BetterESHook compiled without errors but $(HookDllPath) was not produced. Check the C++ linker output above." />
+  </Target>
+
+  <ItemGroup>
+    <PackageReference Include="CommunityToolkit.Mvvm" Version="8.4.0" />
+    <PackageReference Include="Microsoft.Extensions.DependencyInjection" Version="9.0.0" />
+    <PackageReference Include="Microsoft.Extensions.Hosting" Version="9.0.0" />
+    <PackageReference Include="WPF-UI" Version="4.2.0" />
+    <PackageReference Include="WPF-UI.DependencyInjection" Version="4.2.0" />
+    <PackageReference Include="NAudio" Version="2.2.1" />
+    <PackageReference Include="Melanchall.DryWetMidi" Version="7.2.0" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <Content Include="$(HookDllPath)">
+      <Link>assets\betteres_hook.dll</Link>
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+      <ExcludeFromSingleFile>true</ExcludeFromSingleFile>
+      <CopyToPublishDirectory>PreserveNewest</CopyToPublishDirectory>
+    </Content>
+  </ItemGroup>
+</Project>

@@ -1,0 +1,70 @@
+# Visual Studio / .NET
+.vs/
+.vscode/
+*.suo
+*.user
+*.userosscache
+*.sln.docstates
+*.DotSettings.user
+
+# Build outputs
+[Bb]in/
+[Oo]bj/
+artifacts/
+out/
+
+# NuGet
+*.nupkg
+packages/
+.nuget/
+project.lock.json
+project.assets.json
+
+# Test results
+TestResults/
+*.trx
+*.coverage
+
+# WPF temp projects
+*_wpftmp.csproj
+
+# CMake / C++ build
+CMakeFiles/
+CMakeCache.txt
+cmake_install.cmake
+cmake-build-*/
+build/
+
+# C/C++ intermediates and binaries
+*.obj
+*.o
+*.dll
+*.so
+*.a
+*.lib
+*.exp
+*.pdb
+*.pch
+*.ilk
+
+# VS databases
+*.VC.db
+*.VC.opendb
+*.opensdf
+*.sdf
+
+# JetBrains
+.idea/
+*.iml
+
+# Temporary / logs
+*.log
+*.tmp
+*.temp
+*.cache
+*.bak
+*.swp
+
+# OS junk
+*.DS_Store
+Thumbs.db
